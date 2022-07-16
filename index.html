@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourNotes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet"> 
+    <script src="https://kit.fontawesome.com/e92bc9f39f.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./dist/app.js" defer></script>
+</head>
+<body>
+    <div class="header wrapper">
+        <div class="header-title">
+            <i class="fa-regular fa-note-sticky icon"></i>
+            <h1>YourNotes</h1>
+        </div>
+        <div class="nav-icons">
+            <i class="fa-solid fa-file-circle-plus icon"></i>
+            <i class="fa-solid fa-trash-can icon"></i>
+        </div>
+    </div>
+    <div class="notes-section wrapper">
+    </div>
+    <div class="note-form hide-form">
+        <div class="shadow-bg"></div>
+        <p class='adding-header'>Add note</p>
+        <div class="form-box note">
+            <form>
+                <input class="inputs title-input" type="text" maxlength="30" placeholder="Title">
+                <hr>
+                <textarea class="inputs desc-input" name="desc" cols="50" rows="10" placeholder="Description"></textarea>
+                <button class="confirm-add inputs">ADD</button>
+                <p class="adding-error"></p>
+            </form>
+        </div>
+    </div>
+    <div class="footer">
+        <p>© 2022 | YourNotes</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,162 @@
+const Autobind = (_: any, _2: string, descriptor: PropertyDescriptor) => {
+    const descValue = descriptor.value;
+    const adjDescriptor: PropertyDescriptor = {
+        configurable: true,
+        get() {
+            const newValue = descValue.bind(this);
+            return newValue;
+        }
+    }
+    return adjDescriptor;
+}
+
+class Note {
+    hostElement: HTMLDivElement;
+
+    constructor(
+        private title: string, 
+        private description: string,
+    ){
+        this.hostElement = document.querySelector('.notes-section') as HTMLDivElement;
+        
+        this.createNote(this.hostElement);
+    }
+
+    createNote(hostEl: HTMLDivElement){
+        const randomColor = this.randomColor();
+        const newNote = document.createElement('div');
+        newNote.classList.add('note');
+        newNote.style.backgroundColor = `#${randomColor}`;
+    
+        newNote.innerHTML = `
+        <h2>${this.title}</h2>
+        <hr>
+        <p>${this.description}</p>`;
+
+        App.notesArray.push(newNote);
+        newNote.id = 'note' + App.notesArray.indexOf(newNote).toString();
+
+        hostEl.appendChild(newNote);
+    }
+
+    randomColor(){
+        const color = Math.floor(Math.random() * 16777215).toString(16);
+        return color;
+    }
+}
+
+class App {
+    addNoteBtn: HTMLElement;
+    removeNoteBtn: HTMLElement;
+    noteForm: HTMLElement;
+    shadowBg: HTMLDivElement;
+    static notesArray: HTMLDivElement[] = [];
+    
+    constructor(){
+        this.addNoteBtn = document.querySelector('.fa-file-circle-plus') as HTMLElement;
+        this.removeNoteBtn = document.querySelector('.fa-file-circle-xmark') as HTMLElement;
+        this.noteForm = document.querySelector('.note-form') as HTMLDivElement;
+        this.shadowBg = document.querySelector('.shadow-bg') as HTMLDivElement;
+
+        const confirmAddBtn = document.querySelector('.confirm-add') as HTMLButtonElement;
+
+        confirmAddBtn.addEventListener('click', this.addNote);
+
+        this.addNoteBtn.addEventListener('click', () => {
+            this.showAdding(this.noteForm)
+        });
+        this.shadowBg.addEventListener('click', () => {
+            this.hideAdding(this.noteForm);
+        });
+        this.removeNoteBtn.addEventListener('click', this.removeNote);
+    }
+
+    showAdding(el: HTMLElement){
+        el.classList.remove('hide-form');
+    }
+
+    hideAdding(el: HTMLElement){
+        el.classList.add('hide-form');
+    }
+
+    @Autobind
+    addNote(e: MouseEvent){
+        e.preventDefault();
+
+        const titlePlace = document.querySelector('.title-input') as HTMLInputElement;
+        const descPlace = document.querySelector('.desc-input') as HTMLTextAreaElement;
+        const errorPlace = document.querySelector('.adding-error') as HTMLParagraphElement;
+
+        const title = titlePlace.value;
+        const desc = descPlace.value;
+
+        if(title.length!==0 && desc.length!==0){
+            new Note(title, desc);
+
+            titlePlace.value = '';
+            descPlace.value = '';
+            errorPlace.textContent = '';
+            this.hideAdding(this.noteForm);
+        } else {
+            errorPlace.textContent = "Text fields can't be empty!";
+        }
+    }
+
+    @Autobind
+    removeNote(){
+        this.displayElements(this.removeNoteBtn, 'icon', 'btn-selected');
+        this.addNoteBtn.classList.add('hide-btn');
+
+
+        App.notesArray.forEach(el => {
+            el.addEventListener('click', this.removingElement);
+            el.classList.add('add-pointer');
+        });
+
+        this.removeNoteBtn.removeEventListener('click', this.removeNote);
+        this.removeNoteBtn.addEventListener('click', this.restoreDefault);
+    }
+
+    @Autobind
+    restoreDefault(){
+        this.displayElements(this.removeNoteBtn, 'btn-selected', 'icon');
+        this.addNoteBtn.classList.remove('hide-btn');
+
+
+        App.notesArray.forEach(el => {
+            el.removeEventListener('click', this.removingElement)
+            el.classList.remove('add-pointer');
+        });
+        this.removeNoteBtn.addEventListener('click', this.removeNote);
+    }
+
+    // confirmDeleting(e:MouseEvent){
+    //     const target = (e.target as HTMLElement).parentElement as HTMLDivElement;
+
+    //     window.confirm('Siema potwierdzisz?');
+
+    // }
+
+    removingElement(e: MouseEvent){
+        const target = (e.target as HTMLElement).parentElement as HTMLDivElement;
+
+        const noteId = target.id as string;
+        const noteIndex = +noteId.slice(-1);
+        delete App.notesArray[noteIndex];
+
+        const noteToDel = document.querySelector(`#note${noteIndex}`) as HTMLDivElement;
+        noteToDel.remove();
+    }
+
+    displayElements(el: HTMLElement, el2:string , el3: string){
+        el.classList.remove(el2);
+        el.classList.add(el3);
+    }
+}
+
+new App();
+
+//TODO:
+// responsywna strona
+
+// potwierdzanie usuniecia
